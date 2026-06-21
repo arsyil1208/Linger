@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linger — De' Arsyil Putera Pertama</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap');
+
+    :root {
+      --bg: #faf8f4;
+      --paper: #fffdf9;
+      --text: #2c2416;
+      --muted: #7a6f5e;
+      --accent: #c8956c;
+      --accent-light: #f0dcc8;
+      --line: #e8e0d0;
+      --chapter-bg: #f5ede0;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.9;
+      min-height: 100vh;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 270px;
+      height: 100vh;
+      background: #1e180f;
+      color: #d4c4a8;
+      overflow-y: auto;
+      z-index: 100;
+      transform: translateX(-270px);
+      transition: transform .35s ease;
+      padding: 0 0 40px;
+    }
+
+    #sidebar.open {
+      transform: translateX(0);
+    }
+
+    #sidebar-header {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid #3a2e1e;
+    }
+
+    #sidebar-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #e8d5b0;
+      letter-spacing: .04em;
+    }
+
+    #sidebar-header p {
+      font-size: .75rem;
+      color: #8a7a60;
+      margin-top: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #sidebar nav a {
+      display: block;
+      padding: 10px 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: .82rem;
+      color: #b0a080;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+    }
+
+    #sidebar nav a:hover,
+    #sidebar nav a.active {
+      color: #e8d5b0;
+      border-left-color: var(--accent);
+      background: rgba(200, 149, 108, .08);
+      padding-left: 30px;
+    }
+
+    #sidebar nav .nav-section {
+      padding: 16px 24px 6px;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #5a4e3a;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #toggle-btn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 200;
+      background: #1e180f;
+      color: #e8d5b0;
+      border: none;
+      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      flex-direction: column;
+      transition: background .2s;
+    }
+
+    #toggle-btn:hover {
+      background: #2e2412;
+    }
+
+    #toggle-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #e8d5b0;
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 99;
+    }
+
+    #overlay.show {
+      display: block;
+    }
+
+    #main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 28px 100px;
+    }
+
+    #cover {
+      text-align: center;
+      padding: 80px 0 70px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 70px;
+    }
+
+    #cover .ornament {
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+      letter-spacing: .3em;
+    }
+
+    #cover h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.2rem, 8vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    #cover .subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    #cover .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 0 auto 24px;
+    }
+
+    #cover .author {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+
+    #cover .meta {
+      margin-top: 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      color: #b0a080;
+      line-height: 2;
+    }
+
+    .page-section {
+      margin-bottom: 80px;
+    }
+
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .thanks-body {
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .thanks-sig {
+      margin-top: 32px;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      display: flex;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--line);
+    }
+
+    .toc-list li a {
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      color: var(--text);
+      text-decoration: none;
+      flex: 1;
+      transition: color .2s;
+    }
+
+    .toc-list li a:hover {
+      color: var(--accent);
+    }
+
+    .toc-list li .dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--line);
+      margin: 0 8px;
+    }
+
+    .toc-list li .pg {
+      font-family: 'Inter', sans-serif;
+      font-size: .8rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .chapter {
+      margin-bottom: 90px;
+      scroll-margin-top: 30px;
+    }
+
+    .chapter-number {
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .chapter-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .chapter-divider {
+      width: 50px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 24px;
+      border-radius: 1px;
+    }
+
+    .epigraph {
+      margin: 0 0 32px 0;
+      padding: 18px 24px;
+      border-left: 3px solid var(--accent);
+      background: var(--chapter-bg);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      font-size: .95rem;
+      color: var(--muted);
+    }
+
+    .chapter p {
+      margin-bottom: 18px;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    .chapter p:first-of-type::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.6em;
+      line-height: .75;
+      float: left;
+      margin: 6px 10px 0 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .chat-wrap {
+      margin: 22px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat {
+      max-width: 72%;
+      padding: 11px 16px;
+      border-radius: 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: .88rem;
+      line-height: 1.6;
+    }
+
+    .chat-left {
+      background: #f0ece4;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+
+    .chat-right {
+      background: var(--accent-light);
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+    }
+
+    .chat-name {
+      font-size: .72rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .chat-left .chat-name {
+      color: var(--muted);
+    }
+
+    .chat-right .chat-name {
+      color: var(--accent);
+      text-align: right;
+    }
+
+    .note {
+      background: #fef9ee;
+      border: 1px solid #e8d898;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: .92rem;
+      color: #5a4e2e;
+      position: relative;
+    }
+
+    .note::before {
+      content: '✏';
+      position: absolute;
+      top: -12px;
+      left: 16px;
+      background: #fef9ee;
+      padding: 0 6px;
+      font-style: normal;
+      font-size: 1rem;
+    }
+
+    .note .note-label {
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: #b8a050;
+      margin-bottom: 8px;
+      font-style: normal;
+    }
+
+    .quote-block {
+      border-left: 3px solid var(--accent);
+      padding: 16px 24px;
+      margin-bottom: 32px;
+      background: var(--chapter-bg);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .quote-block p {
+      font-style: italic;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .quote-block .q-attr {
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .about-body p {
+      margin-bottom: 16px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    footer .footer-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    #back-top {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity .3s;
+      z-index: 50;
+    }
+
+    #back-top.visible {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      #main {
+        padding: 50px 18px 80px;
+      }
+
+      .chat {
+        max-width: 88%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button id="toggle-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div id="overlay"></div>
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <h2>Linger</h2>
+      <p>De' Arsyil Putera Pertama</p>
+    </div>
+    <nav>
+      <div class="nav-section">Halaman Awal</div>
+      <a href="#cover">Cover</a>
+      <a href="#thanks">Thanks To</a>
+      <a href="#toc">Daftar Isi</a>
+      <div class="nav-section">Cerita</div>
+      <a href="#prolog">Prolog — Sebelum Semuanya</a>
+      <a href="#bab1">Bab 1 — Obrolan di Ujung Koridor</a>
+      <a href="#bab2">Bab 2 — Yang Datang Tanpa Diundang</a>
+      <a href="#bab3">Bab 3 — Nama yang Masih Tinggal</a>
+      <a href="#bab4">Bab 4 — Jauh</a>
+      <a href="#bab5">Bab 5 — Geng yang Salah</a>
+      <a href="#bab6">Bab 6 — Dua Dunia yang Berbeda</a>
+      <a href="#bab7">Bab 7 — Dekat Lagi</a>
+      <a href="#bab8">Bab 8 — Obat di Kantin</a>
+      <a href="#bab9">Bab 9 — Hal yang Tidak Diucapkan</a>
+      <a href="#bab10">Bab 10 — Malam yang Salah</a>
+      <a href="#bab11">Bab 11 — Serpihan</a>
+      <a href="#bab12">Bab 12 — Belajar Pergi</a>
+      <a href="#bab13">Bab 13 — Setelah Bagas</a>
+      <a href="#bab14">Bab 14 — Terlambat Tapi Nyata</a>
+      <a href="#bab15">Bab 15 — Klinik</a>
+      <a href="#bab16">Bab 16 — Jantung yang Terlalu Lelah</a>
+      <a href="#epilog">Epilog — Surat yang Tidak Terkirim</a>
+      <div class="nav-section">Penutup</div>
+      <a href="#quotes">Quotes</a>
+      <a href="#about">Tentang Penulis</a>
+    </nav>
+  </aside>
+  <main id="main">
+
+    <!-- COVER -->
+    <section id="cover" class="page-section">
+      <div class="ornament">✦ ✦ ✦</div>
+      <h1>Linger</h1>
+      <div class="subtitle">A Novel</div>
+      <div class="divider"></div>
+      <div class="author">De' Arsyil Putera Pertama</div>
+      <div class="meta">Copyright ©️ 2026 De' Arsyil · Cetakan Pertama, Juni 2026<br>14 × 20 cm · 198
+        halaman<br><br>arsyil1208@gmail.com · @d_archyll</div>
+    </section>
+
+    <!-- THANKS TO -->
+    <section id="thanks" class="page-section chapter">
+      <div class="section-label">Halaman Persembahan</div>
+      <h2 class="section-title">Thanks To</h2>
+      <div class="thanks-body">
+        <p>Bismillahirrahmanirrahim.</p>
+        <p>Terima kasih kepada Allah SWT yang sudah memberikan kesehatan, kesempatan, dan kemudahan sampai novel ini
+          bisa selesai ditulis.</p>
+        <p>Terima kasih untuk kedua orang tua, keluarga, sahabat, dan orang-orang terdekat yang selalu ada dan selalu
+          percaya, bahkan di saat aku sendiri kadang ragu.</p>
+        <p>Terima kasih untuk semua pengalaman yang pernah datang — yang membahagiakan maupun yang menyakitkan. Karena
+          tanpa semua itu, cerita ini mungkin tidak akan pernah ada.</p>
+        <p>Dan terima kasih untuk kamu yang sedang membaca halaman ini. Di antara banyaknya pilihan, kamu memilih
+          membuka yang satu ini. Itu saja sudah berarti banyak.</p>
+        <p>Selamat membaca. Semoga ada bagian kecil dari cerita ini yang menemani kamu lebih lama dari halaman
+          terakhirnya.</p>
+      </div>
+      <div class="thanks-sig">
+        "Aku harap suatu hari nanti,<br>
+        kamu bisa mengerti kenapa aku tidak pernah benar-benar berkata selamat tinggal."<br><br>
+        — De' Arsyil, 2025–2026
+      </div>
+    </section>
+
+    <!-- DAFTAR ISI -->
+    <section id="toc" class="page-section">
+      <div class="section-label">Navigasi</div>
+      <h2 class="section-title">Daftar Isi</h2>
+      <ul class="toc-list">
+        <li><a href="#thanks">Thanks To</a><span class="dots"></span><span class="pg">3</span></li>
+        <li><a href="#prolog">Prolog — Sebelum Semuanya</a><span class="dots"></span><span class="pg">7</span></li>
+        <li><a href="#bab1">Bab Satu — Obrolan di Ujung Koridor</a><span class="dots"></span><span class="pg">15</span>
+        </li>
+        <li><a href="#bab2">Bab Dua — Yang Datang Tanpa Diundang</a><span class="dots"></span><span class="pg">24</span>
+        </li>
+        <li><a href="#bab3">Bab Tiga — Nama yang Masih Tinggal</a><span class="dots"></span><span class="pg">33</span>
+        </li>
+        <li><a href="#bab4">Bab Empat — Jauh</a><span class="dots"></span><span class="pg">42</span></li>
+        <li><a href="#bab5">Bab Lima — Geng yang Salah</a><span class="dots"></span><span class="pg">51</span></li>
+        <li><a href="#bab6">Bab Enam — Dua Dunia yang Berbeda</a><span class="dots"></span><span class="pg">61</span>
+        </li>
+        <li><a href="#bab7">Bab Tujuh — Dekat Lagi</a><span class="dots"></span><span class="pg">70</span></li>
+        <li><a href="#bab8">Bab Delapan — Obat di Kantin</a><span class="dots"></span><span class="pg">79</span></li>
+        <li><a href="#bab9">Bab Sembilan — Hal yang Tidak Diucapkan</a><span class="dots"></span><span
+            class="pg">88</span></li>
+        <li><a href="#bab10">Bab Sepuluh — Malam yang Salah</a><span class="dots"></span><span class="pg">97</span></li>
+        <li><a href="#bab11">Bab Sebelas — Serpihan</a><span class="dots"></span><span class="pg">107</span></li>
+        <li><a href="#bab12">Bab Dua Belas — Belajar Pergi</a><span class="dots"></span><span class="pg">116</span></li>
+        <li><a href="#bab13">Bab Tiga Belas — Setelah Bagas</a><span class="dots"></span><span class="pg">125</span>
+        </li>
+        <li><a href="#bab14">Bab Empat Belas — Terlambat Tapi Nyata</a><span class="dots"></span><span
+            class="pg">134</span></li>
+        <li><a href="#bab15">Bab Lima Belas — Klinik</a><span class="dots"></span><span class="pg">143</span></li>
+        <li><a href="#bab16">Bab Enam Belas — Jantung yang Terlalu Lelah</a><span class="dots"></span><span
+            class="pg">154</span></li>
+        <li><a href="#epilog">Epilog — Surat yang Tidak Terkirim</a><span class="dots"></span><span
+            class="pg">166</span></li>
+        <li><a href="#quotes">Quotes</a><span class="dots"></span><span class="pg">176</span></li>
+        <li><a href="#about">Tentang Penulis</a><span class="dots"></span><span class="pg">177</span></li>
+      </ul>
+    </section>
+
+    <!-- PROLOG -->
+    <section id="prolog" class="chapter">
+      <div class="chapter-number">Prolog</div>
+      <h2 class="chapter-title">Sebelum Semuanya</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kadang seseorang masuk ke hidup kita bukan lewat hal besar. Tapi lewat obrolan kecil
+        yang bahkan nyaris dilupakan — sampai akhirnya kita sadar, dialah yang paling sulit kita lepaskan."</blockquote>
+      <p>Ini bukan cerita tentang cinta yang berakhir bahagia. Aku ingin kamu tahu itu dari awal, supaya kamu tidak
+        berharap terlalu tinggi seperti yang pernah aku lakukan.</p>
+      <p>Ini cerita tentang dua orang yang hampir. Yang hampir saling memilih, hampir cukup berani, hampir punya waktu.
+        Tapi pada akhirnya, "hampir" memang bukan "benar-benar".</p>
+      <p>Namanya Sena. Perempuan dengan headset putih yang selalu bertengger di telinganya dan tawa yang terlalu mudah
+        keluar untuk seseorang yang ternyata menyimpan banyak hal di dalam. Aku mengenalnya pertama kali di hari ujian
+        semester — bukan karena ada momen dramatis. Hanya karena dia bertanya jawaban soal nomor lima dan aku menjawab
+        datar: "B."</p>
+      <p>Dari hal sesederhana itu, semuanya dimulai.</p>
+      <p>Aku Naren. Tidak banyak yang perlu dijelaskan tentangku. Aku pendiam, terlalu sering mengikuti arus karena
+        tidak mau repot dengan konflik, dan punya kebiasaan buruk memperhatikan orang dari jauh daripada langsung
+        bicara. Beberapa waktu dalam hidupku juga pernah kuisi bersama orang-orang yang salah — karena kesepian memang
+        kadang membuat kita tidak terlalu selektif soal siapa yang kita biarkan masuk.</p>
+      <p>Tapi ini bukan cerita tentang kesalahanku saja.</p>
+      <p>Ini juga cerita tentang Sena yang tidak pernah benar-benar memberitahuku bahwa ada sesuatu yang salah dengan
+        jantungnya. Bahwa selama kita pelan-pelan saling mendekat, dia sudah tahu bahwa waktu yang dimilikinya mungkin
+        tidak sepanjang yang aku kira.</p>
+      <p>Aku menulis ini beberapa bulan setelah dia pergi. Bukan pergi karena tidak mau — tapi pergi karena tubuhnya
+        memintanya untuk pergi ke kota lain, ke rumah sakit yang lebih besar, ke tempat yang tidak bisa aku ikuti.</p>
+      <p>Yang paling menyakitkan bukan kepergiannya. Yang paling menyakitkan adalah kenyataan bahwa aku terlambat
+        menyadari semuanya. Bahwa ketika akhirnya aku memberanikan diri, Sena sudah tidak punya ruang untuk memulai.
+        Bukan karena dia tidak mau. Tapi karena kondisinya tidak mengizinkan.</p>
+      <p>Kita tidak sempat. Bukan putus. Bukan salah satu dari kita yang berpaling. Tapi tidak pernah benar-benar
+        dimulai.</p>
+      <p>Ini suratku untuknya. Tentang semua yang harusnya aku katakan lebih cepat.</p>
+    </section>
+
+    <!-- BAB 1 -->
+    <section id="bab1" class="chapter">
+      <div class="chapter-number">Bab Satu</div>
+      <h2 class="chapter-title">Obrolan di Ujung Koridor</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Yang paling bahaya dari rasa nyaman adalah saat kita mulai menganggapnya punya masa
+        depan."</blockquote>
+      <p>Hari ujian semester selalu punya atmosfer tersendiri. Kelas yang biasanya riuh mendadak sunyi kecuali suara
+        kertas dan decit kursi. Kipas angin berputar pelan sambil mengeluarkan bunyi yang lebih mirip rintihan. Naren
+        duduk di barisan ketiga dari depan, menatap lembar soal dengan ekspresi yang sama ratanya dengan langit mendung
+        di luar jendela.</p>
+      <p>Otaknya tidak di sini hari ini. Rumus-rumus yang semalam dia hapal mendadak lenyap begitu lembar soal ada di
+        tangannya.</p>
+      <p><em>"Psst."</em></p>
+      <p>Naren sedikit menoleh. Dua kursi lebih ke belakang, seorang perempuan menatapnya dengan ekspresi setengah
+        panik, setengah minta tolong. Rambut depannya sedikit berantakan, ujung pensil masih menempel di bibirnya.</p>
+      <p><em>"Nomor lima apa?"</em> bisiknya sangat pelan.</p>
+      <p>Naren melirik lembar jawabannya sebentar. <em>"B."</em> Jawabannya datar. Bahkan tidak menoleh penuh.</p>
+      <p>Perempuan itu mengangguk kecil. Lalu tersenyum tipis. <em>"Thanks."</em></p>
+      <p>Itu saja. Tidak ada obrolan lain. Tidak ada perkenalan. Tidak ada hal yang terasa spesial.</p>
+      <p>Bel berbunyi tiga puluh menit kemudian. Saat Naren berjalan menuju pintu, matanya tidak sengaja bertemu dengan
+        perempuan tadi yang sedang merapikan rambutnya. Dia tersenyum lagi. Kecil. Natural. Seperti sudah lama kenal.
+      </p>
+      <p>Naren buru-buru mengalihkan pandangan.</p>
+      <p>Selesai. Lupakan.</p>
+      <p>Tapi ternyata tidak semudah itu. Beberapa hari kemudian di koridor, perempuan itu — yang belakangan dia tahu
+        namanya Sena — menyapanya lebih dulu. <em>"Hai, Ren."</em> Headset putih menggantung di lehernya. Dia melambai
+        kecil.</p>
+      <p>Naren membalas dengan anggukan singkat. Dan itu saja. Tapi Sena selalu menyapa duluan setiap kali berpapasan
+        setelah itu.</p>
+      <p>Lama-lama Naren hafal: Sena hampir selalu pakai headset putih itu. Tawanya terdengar lebih keras dari
+        orang-orang di sekitarnya. Kalau sedang serius membaca, dia akan menggigit ujung pulpen pelan-pelan.</p>
+      <p>Kemudian suatu pagi di depan loker, Sena muncul di sebelahnya. <em>"Ren, punya notes IPA bab tiga gak? Punyaku
+          ketinggalan."</em> <em>"Ada. Tapi di kelas."</em> <em>"Boleh minta foto nanti?"</em> <em>"Boleh."</em></p>
+      <p>Sena memberi nomor WA-nya. Sore itu Naren mengirim foto notes. Sena membalas dengan deretan emoji terima kasih
+        yang berlebihan, lalu: <em>"Kamu baik banget sih, Ren, serius."</em></p>
+      <p>Naren hanya membalas: <em>"Iya."</em> Tapi dia tersenyum sendiri sambil meletakkan ponsel di meja belajar.</p>
+      <p>Dari foto notes itu, obrolan pelan-pelan berlanjut. Tentang tugas, guru yang strict, hal-hal kecil di sekolah.
+        Lalu melebar ke mana-mana. Dan Naren yang biasanya tidak terlalu banyak ngobrol lewat chat, mendapati dirinya
+        menunggu notifikasi nama Sena muncul setiap malam.</p>
+      <p>Sampai suatu hari jam olahraga, Naren melihat Sena berhenti di pinggir lapangan setelah lari keliling.
+        Tangannya bertumpu di lutut. Wajahnya pucat lebih dari sekadar kelelahan biasa.</p>
+      <p>Guru olahraga melirik. <em>"Sena, kamu gak apa-apa?"</em></p>
+      <p><em>"Iya, Pak. Cuma ngos-ngosan."</em></p>
+      <p>Beberapa detik Sena terlihat benar-benar tidak baik — napasnya tidak teratur, wajahnya terlalu putih. Tapi
+        kemudian dia menegakkan tubuh, minum air, dan tertawa bareng teman-temannya seolah tidak terjadi apa-apa.</p>
+      <p>Naren kembali berlari. Mengabaikannya. Mungkin memang cuma kelelahan biasa.</p>
+    </section>
+
+    <!-- BAB 2 -->
+    <section id="bab2" class="chapter">
+      <div class="chapter-number">Bab Dua</div>
+      <h2 class="chapter-title">Yang Datang Tanpa Diundang</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Perasaan tidak pernah minta izin. Dia datang sendiri, tumbuh sendiri, dan menyakiti
+        sendiri."</blockquote>
+      <p>Naren tidak pernah benar-benar merencanakan untuk dekat dengan Sena. Itu yang membuat semuanya lebih
+        membingungkan — karena yang tidak direncanakan biasanya justru yang paling sulit dikendalikan.</p>
+      <p>Mereka mulai sering mengobrol di luar sekolah. Dari pelajaran, lama-lama meluas ke topik apa saja. Tentang
+        playlist yang sedang mereka dengarkan. Tentang film yang baru ditonton. Tentang hal-hal random yang muncul di
+        kepala jam sebelas malam.</p>
+      <div class="chat-wrap">
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>gue tadi hampir jatoh di tangga, malu banget anjir
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>hahaha, ketauan?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>ketauan dong, ada Dimas di bawah. dia ketawa paling keras
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>makanya jalan pelan
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>makanya jangan banyak omong
+        </div>
+      </div>
+      <p>Reno, yang sedang rebahan di lantai kamarnya, melirik curiga. <em>"Senyum-senyum sendiri tuh bahaya."</em>
+        <em>"Gak ada."</em> <em>"Sama siapa chat?"</em> <em>"Reno, tidur sana."</em></p>
+      <p>Reno tertawa. <em>"Sena ya?"</em> Naren tidak menjawab, yang artinya iya.</p>
+      <p><em>"Gue cuma bilang hati-hati,"</em> kata Reno lebih serius. <em>"Sena itu gak gampang ditebak."</em></p>
+      <p>Di sekolah, Sena tetap menjadi Sena yang semua orang kenal — ramai, mudah akrab. Tapi dengan Naren, ada versi
+        Sena yang lebih pelan. Yang mau diam cukup lama sebelum menjawab. Yang kadang terlihat memikirkan sesuatu berat
+        dan memilih tidak bicara tentangnya.</p>
+      <p>Suatu siang di kantin, Sena meletakkan sendok di tengah makan. <em>"Ren, lo pernah gak ngerasa capek sama
+          sesuatu tapi gak tahu capeknya dari mana?"</em></p>
+      <p><em>"Capek apa?"</em> <em>"Gak tahu. Kayak badan dan kepala gak sync aja."</em></p>
+      <p>Naren menatapnya sebentar. Ada yang aneh dari cara Sena bicara — terlalu casual untuk pertanyaan yang terdengar
+        cukup berat. <em>"Mungkin kurang tidur,"</em> kata Naren akhirnya.</p>
+      <p>Sena tertawa kecil. <em>"Mungkin."</em> Percakapan berlanjut ke hal lebih ringan. Tapi kalimat itu menetap di
+        belakang kepala Naren lebih lama dari yang seharusnya.</p>
+      <p>Minggu berikutnya, Sena tidak masuk sekolah tiga hari berturut-turut. Tidak ada penjelasan di grup kelas. Naren
+        tanya lewat WA:</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>Sen, lo kenapa tiga hari gak masuk?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>biasa aja kok. ntar juga masuk
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>sakit?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>gak, cuma istirahat. jangan lebay
+        </div>
+      </div>
+      <p>Naren menatap layar beberapa detik. <em>Biasa aja.</em> Kalimat paling tidak informatif di dunia. Dia tidak
+        mendesak lebih jauh dan membalas singkat: <em>"Oke, cepet sembuh kalau sakit."</em></p>
+      <p>Hari keempat Sena kembali masuk. Terlihat seperti biasa. Tapi ada sesuatu yang mulai tertanam diam-diam di
+        belakang pikiran Naren — bahwa Sena kadang tidak sepenuhnya ada di tempat yang terlihat. Bahwa di balik tawa
+        yang mudah itu, ada lapisan yang tidak dibuka untuk sembarang orang.</p>
+    </section>
+
+    <!-- BAB 3 -->
+    <section id="bab3" class="chapter">
+      <div class="chapter-number">Bab Tiga</div>
+      <h2 class="chapter-title">Nama yang Masih Tinggal</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kadang yang membuat seseorang sulit dilupakan bukan karena dia sempat memiliki kita,
+        tapi karena dia sempat membuat kita merasa diperhatikan."</blockquote>
+      <p>Mereka mulai lebih sering bertemu di luar konteks sekolah. Perpustakaan kota yang sepi jadi tempat favoritnya.
+        Sena suka duduk di pojok dekat jendela, dan selalu membawa dua cangkir teh dari vending machine di lobi — satu
+        untuk dirinya, satu untuk Naren yang biasanya datang belakangan.</p>
+      <p><em>"Kamu selalu telat,"</em> kata Sena suatu hari tanpa mengangkat kepala dari buku.</p>
+      <p><em>"Lima menit."</em> <em>"Selalu lima menit."</em> <em>"Artinya konsisten."</em></p>
+      <p>Sena akhirnya mengangkat kepala dan tertawa pelan. Tawa kecil yang tidak berlebihan, tapi menetap di kepala
+        Naren lebih lama dari yang seharusnya.</p>
+      <p>Mereka menghabiskan beberapa jam di sana. Sena membaca, Naren mendengarkan musik sambil sesekali mengerjakan
+        soal latihan. Tidak banyak ngobrol. Tapi keheningan bersama Sena selalu terasa berbeda dari keheningan dengan
+        orang lain — tidak canggung, tidak berat.</p>
+      <p>Di perjalanan pulang, saat angin sore masih dingin dan langit menguning, Sena tiba-tiba berkata: <em>"Ren, kamu
+          orangnya kayak gini terus atau cuma pas sama aku?"</em></p>
+      <p><em>"Kayak gimana?"</em> <em>"Pendiam. Tapi… comfortable gitu."</em></p>
+      <p>Naren berpikir sebentar. <em>"Gak tau. Mungkin cuma sama orang tertentu."</em></p>
+      <p>Sena mengangguk pelan. <em>"Aku juga. Sama orang kebanyakan aku bisa ramai. Tapi capeknya juga
+          kebanyakan."</em></p>
+      <p>Kalimat itu terasa seperti sesuatu yang penting, meski Naren tidak sepenuhnya tahu kenapa.</p>
+      <p>Beberapa hari kemudian, Sena izin pulang lebih awal dari jam pelajaran keempat. Guru hanya mengangguk tanpa
+        banyak tanya. Hanya Naren yang sempat melihat Sena berjalan ke luar kelas dengan langkah yang sedikit lebih
+        berat dari biasanya.</p>
+      <p>Sore itu dia mengirim pesan:</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>pulang duluan kenapa?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>ada keperluan. biasa aja kok
+        </div>
+      </div>
+      <p><em>Biasa aja.</em> Lagi. Naren menghela napas pelan dan tidak lagi membalas.</p>
+      <p>Malam itu, sambil rebahan di kamar, Naren akhirnya jujur pada dirinya sendiri: ini bukan lagi sekadar rasa
+        nyaman biasa.</p>
+      <p>Reno yang sudah tahu tanpa perlu dijelaskan duduk sambil makan keripik. <em>"Gimana perkembangannya?"</em>
+        <em>"Gak ada yang berkembang."</em> <em>"Iya, itu masalahnya."</em></p>
+      <p>Naren melempar bantal. <em>"Lo diem dulu deh."</em></p>
+      <p><em>"Gue serius, Ren. Kalau lo suka, bilang. Jangan nunggu sampai kesempatannya hilang."</em></p>
+      <p>Naren tidak menjawab. Tapi kalimat itu menetap jauh lebih lama dari yang direncanakan.</p>
+      <div class="note">
+        <div class="note-label">Chat tengah malam</div>
+        Sena: lo masih bangun?<br>
+        Naren: masih<br>
+        Sena: sama. dengerin lagu apa sekarang?<br>
+        Naren: gak ada<br>
+        Sena: yaudah sini gue kirim dulu
+      </div>
+      <p>Malam itu Sena mengirim sebuah lagu instrumental tanpa penjelasan. Naren mendengarkannya sambil menatap
+        langit-langit kamar. Pelan. Agak sedih. Tapi juga terasa seperti sesuatu yang familiar. Dia tidak tahu bahwa
+        lagu itu adalah hal terakhir yang dia kenang tentang Sena sebelum semuanya mulai berubah.</p>
+    </section>
+
+    <!-- BAB 4 -->
+    <section id="bab4" class="chapter">
+      <div class="chapter-number">Bab Empat</div>
+      <h2 class="chapter-title">Jauh</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Yang paling menyakitkan bukan ketika seseorang tiba-tiba menjauh. Tapi ketika kamu
+        sadar dia menjauh, tapi tidak tahu kenapa."</blockquote>
+      <p>Perubahan itu datang pelan. Terlalu pelan untuk langsung disadari, terlalu nyata untuk diabaikan setelah
+        beberapa minggu. Sena mulai lebih jarang membalas pesan. Pesannya terbaca tapi tidak dibalas. Atau dibalas
+        dengan satu kata setelah berjam-jam.</p>
+      <p>Di sekolah pun sama. Sena masih ada, tapi kalau mata Naren mencarinya di lorong, Sena sudah jalan lebih cepat.
+        Kalau mereka secara tidak sengaja berada di kantin pada waktu yang sama, Sena akan duduk di meja yang berbeda.
+      </p>
+      <p>Naren tidak mengerti. Tidak ada pertengkaran. Tidak ada momen yang salah.</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>lo gak apa-apa?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>iya kok. lagi banyak urusan aja
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>oke
+        </div>
+      </div>
+      <p>Naren menatap "oke" yang dia kirim itu cukup lama. Terasa seperti bendera putih.</p>
+      <p>Reno duduk di sebelahnya di kantin. <em>"Sena lagi?"</em> <em>"Gak."</em> <em>"Boong."</em></p>
+      <p>Naren menghela napas. <em>"Dia ngejauh. Gak tahu kenapa."</em></p>
+      <p><em>"Lo tanya langsung?"</em> <em>"Udah. Katanya banyak urusan."</em></p>
+      <p>Reno memainkan sendok plastiknya pelan. <em>"Mungkin ada alasan yang lo belum tahu."</em></p>
+      <p><em>"Maksudnya?"</em></p>
+      <p><em>"Gak semua orang ngejauh karena mereka gak peduli. Kadang justru sebaliknya."</em></p>
+      <p>Naren menatapnya. <em>"Itu interpretasi paling ambigu yang pernah lo bilang."</em></p>
+      <p>Tapi kalimat itu tetap menetap.</p>
+      <p>Hari-hari berlalu dengan perasaan menggantung. Yang berbahaya dari jarak seperti ini adalah: tidak ada yang
+        salah secara teknis. Mereka masih saling kenal. Masih sesekali bertegur sapa singkat. Tapi ada kehangatan yang
+        hilang — dan Naren tidak tahu bagaimana cara memintanya kembali tanpa terlihat memaksa.</p>
+      <p>Sementara itu, ada kekosongan yang pelan-pelan terbentuk di hari-hari Naren. Dan kekosongan itu mulai menarik
+        hal-hal yang salah untuk masuk.</p>
+    </section>
+
+    <!-- BAB 5 -->
+    <section id="bab5" class="chapter">
+      <div class="chapter-number">Bab Lima</div>
+      <h2 class="chapter-title">Geng yang Salah</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kita tidak selalu memilih lingkungan yang buruk karena bodoh. Kadang kita memilihnya
+        karena kita sedang sangat butuh untuk tidak sendirian."</blockquote>
+      <p>Bagas pertama kali menyapa Naren di depan warung dekat sekolah, tiga minggu setelah Sena mulai menjauh.</p>
+      <p>Bagas orangnya mudah disukai. Tinggi, cara bicara yang percaya diri, punya banyak cerita, dan tahu persis
+        bagaimana caranya membuat orang merasa nyaman. Dalam dua puluh menit pertama, Naren sudah diajak duduk,
+        ditraktir es teh, dan ditertawakan bersama tentang guru kimia yang cara ngajarnya seperti melafalkan kamus.</p>
+      <p>Malam itu terasa ringan. Dan Naren yang belakangan ini sering merasa berat sendirian, tidak punya banyak alasan
+        untuk menolak.</p>
+      <p><em>"Lo masuk squad kita aja,"</em> kata Bagas santai. <em>"Nongkrong bareng. Gak ribet."</em></p>
+      <p>Dan Naren, yang tidak terlalu memikirkan konsekuensinya, hanya berkata: <em>"Boleh."</em></p>
+      <p>Beberapa minggu pertama menyenangkan. Mereka nongkrong di tempat berbeda-beda sepulang sekolah. Naren merasa
+        punya ruang untuk tidak memikirkan Sena selama beberapa jam. Tapi lama-lama, dia mulai melihat sisi lain dari
+        lingkaran itu.</p>
+      <p>Bagas sering bolos. Hampir setiap hari ada alasan baru. Dan pernah cerita santai tentang "masalah" dengan anak
+        sekolah lain — tentang insiden di parkiran, tentang ancam-mengancam yang disamarkan sebagai "ngelurusin salah
+        paham".</p>
+      <p>Naren tidak bertanya lebih jauh. Itu kesalahannya yang pertama.</p>
+      <p>Reno menahannya suatu sore saat Naren bersiap keluar kelas menyusul Bagas. <em>"Lo tahu kan Bagas itu
+          gimana?"</em> <em>"Gue tahu."</em> <em>"Terus?"</em> <em>"Gue cuma nongkrong. Gak ngapa-ngapain."</em></p>
+      <p>Reno menghela napas. <em>"Nongkrong sama orang yang salah itu juga ngapa-ngapain, Ren. Cepat atau lambat lo
+          bakal ketarik."</em></p>
+      <p>Naren tidak menjawab. Tapi dia tidak berhenti keluar juga.</p>
+      <p>Yang dia tidak tahu adalah bahwa Sena pernah melihatnya. Suatu sore di dekat gerbang sekolah, ketika Naren
+        sedang tertawa bersama Bagas dan Rico di trotoar. Sena yang kebetulan lewat ke arah berlawanan melihatnya — dan
+        ekspresinya bukan sekadar netral. Ada sesuatu yang menutup di wajahnya, cepat sekali, lalu hilang.</p>
+      <p>Naren tidak melihat itu. Dia sedang menoleh ke arah lain.</p>
+      <p>Dan malam itu, Sena tidak mengirim pesan apa pun. Untuk seseorang yang sudah memutuskan menjaga jarak dari
+        Naren justru demi melindunginya, melihat Naren berjalan masuk ke lingkaran yang lain terasa seperti ironi yang
+        menyakitkan.</p>
+    </section>
+
+    <!-- BAB 6 -->
+    <section id="bab6" class="chapter">
+      <div class="chapter-number">Bab Enam</div>
+      <h2 class="chapter-title">Dua Dunia yang Berbeda</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kita tidak selalu bisa menjelaskan mengapa kita menjauh. Kadang kita cuma tahu bahwa
+        tinggal akan lebih menyakitkan — bukan untuk diri sendiri, tapi untuk orang yang kita jaga."</blockquote>
+      <p>Sena tidak benar-benar membenci Naren karena bergabung dengan lingkaran Bagas. Yang dia rasakan lebih dari itu
+        — campuran antara khawatir, kecewa, dan lega sekaligus.</p>
+      <p>Lega? Ya. Karena kalau Naren mudah terbawa lingkungan yang salah, keputusannya untuk menjaga jarak menjadi
+        sedikit lebih mudah dibenarkan. Ini tidak adil. Dan memang tidak adil. Sena sadar itu.</p>
+      <p>Tapi dia tidak punya banyak pilihan yang terasa benar. Kondisi jantungnya sudah memburuk selama beberapa bulan
+        terakhir. Dokter sudah memberikan gambaran yang cukup jelas: aktivitasnya harus dibatasi, stres harus dikurangi,
+        dan ada kemungkinan dia membutuhkan penanganan lebih lanjut di kota lain. Dia tidak mau menyeret siapa pun ke
+        dalam itu. Apalagi seseorang yang belum benar-benar tahu apa yang sedang dia hadapi.</p>
+      <p>Jadi Sena menjaga jarak. Pelan-pelan, tanpa konfrontasi, tanpa penjelasan yang membuka ruang pertanyaan.</p>
+      <p>Suatu sore yang tidak sengaja, Sena dan Naren berada di perpustakaan pada waktu yang sama. Mereka saling
+        melihat sebentar di antara rak buku. Sena tersenyum tipis — formal, seperti kepada kenalan biasa. Naren membalas
+        dengan anggukan, lalu memilih meja di sudut yang paling jauh.</p>
+      <p>Mereka menghabiskan hampir satu jam di ruangan yang sama tanpa bertukar sepatah kata pun.</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>tadi di perpus ya?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>iya. kenapa gak nyapa?
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>lo yang kelihatannya gak mau disapa
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>maaf ya kalau kelihatan kayak gitu
+        </div>
+      </div>
+      <p>Tidak ada yang dilanjutkan lagi malam itu dari kedua pihak.</p>
+      <p>Naren meletakkan ponsel. Ada frustrasi yang tidak tahu harus diarahkan ke mana. Bukan marah. Lebih seperti
+        lelah. Lelah dengan ambiguitas yang tidak pernah selesai.</p>
+      <p>Dia membuka chat grup Bagas dan Rico. Ada rencana nongkrong besok. Naren membalas: <em>"Gas."</em> Karena
+        setidaknya di sana, tidak ada yang ambigu. Tidak ada yang menyakitkan karena terlalu jelas. Dan itu, meski
+        salah, terasa lebih mudah dari segalanya malam itu.</p>
+    </section>
+
+    <!-- BAB 7 -->
+    <section id="bab7" class="chapter">
+      <div class="chapter-number">Bab Tujuh</div>
+      <h2 class="chapter-title">Dekat Lagi</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kedekatan yang tumbuh kembali selalu punya rasa berbeda. Lebih hati-hati. Lebih
+        sadar. Tapi juga, entah kenapa, terasa lebih nyata."</blockquote>
+      <p>Perubahan kecil itu terjadi karena hujan.</p>
+      <p>Hujan deras yang turun tanpa peringatan di hari Rabu, tepat saat jam pulang sekolah. Naren berdiri di koridor
+        lantai dua sambil menatap halaman yang kebanjiran pelan-pelan. Dia tidak punya payung. Lupa bawa sejak kemarin.
+      </p>
+      <p><em>"Punya payung?"</em></p>
+      <p>Suara itu dari belakang. Naren menoleh. Sena berdiri sambil memegang payung biru yang masih terlipat.
+        Ekspresinya netral, tapi ada sedikit ragu di sana. <em>"Kamu kan gak bawa. Gue lihat tadi."</em></p>
+      <p><em>"Lo masih perhatiin gue?"</em> Kata-kata itu keluar lebih cepat dari yang Naren rencanakan.</p>
+      <p>Sena tidak menjawab langsung. Pipinya sedikit memerah. <em>"Mau atau enggak?"</em></p>
+      <p><em>"Mau."</em></p>
+      <p>Mereka berjalan berdampingan di bawah hujan, berbagi payung yang sedikit sempit untuk dua orang. Bahu mereka
+        beberapa kali bersentuhan. Tidak ada yang membahasnya.</p>
+      <p>Di persimpangan jalan, ketika hujan mulai mereda, Sena berhenti. <em>"Maaf ya. Belakangan ini gue agak
+          menghilang."</em></p>
+      <p><em>"Gak papa."</em> <em>"Beneran gak papa? Atau jawaban basa-basi?"</em> <em>"Kombinasi keduanya."</em></p>
+      <p>Sena tertawa kecil. Dan tawa itu terasa seperti sesuatu yang sudah lama Naren tidak dengar dari dekat.</p>
+      <p><em>"Gue lagi banyak mikir,"</em> kata Sena. Matanya menatap jalan yang basah. <em>"Tentang banyak hal. Kadang
+          gue butuh jarak supaya bisa mikir jernih."</em></p>
+      <p><em>"Kalau udah mau cerita, cerita,"</em> kata Naren pelan.</p>
+      <p>Sena menatapnya. Sesuatu bergerak di wajahnya — bukan senyum, tapi lebih seperti rasa lega yang tertahan.
+        <em>"Thanks, Ren."</em></p>
+      <p>Hari-hari setelahnya mereka pelan-pelan kembali dekat. Lebih berhati-hati, lebih sadar. Tapi hangat. Sena mulai
+        sesekali mengirim pesan lagi.</p>
+      <p>Suatu sore mereka duduk di tribun belakang sekolah. Sena mendengarkan musik sambil menyandarkan kepala. Headset
+        putih itu kembali di telinganya.</p>
+      <p><em>"Ren,"</em> Sena membuka satu sisi headsetnya. <em>"Hm?"</em> <em>"Lo suka sama gue ya?"</em></p>
+      <p>Pertanyaan itu datang tanpa peringatan. Naren tidak langsung menjawab. Matanya tetap menatap lapangan kosong.
+      </p>
+      <p><em>"Kenapa tanya?"</em> <em>"Karena gue pengen tahu."</em></p>
+      <p>Beberapa detik berlalu. Kemudian Naren mengangguk kecil. Tidak dramatis. Hanya jujur.</p>
+      <p>Sena tidak bersuara sebentar. Lalu: <em>"Gue tahu."</em> <em>"Terus?"</em> <em>"Belum tahu."</em></p>
+      <p>Ada sesuatu yang tidak dia katakan. Naren bisa merasakannya. Tapi dia tidak tahu cara menyentuhnya. Jadi dia
+        hanya mengangguk dan kembali menatap lapangan.</p>
+      <p>Dan dia tidak tahu bahwa malam itu, Sena menangis tanpa alasan yang bisa dia jelaskan kepada siapa pun.</p>
+    </section>
+
+    <!-- BAB 8 -->
+    <section id="bab8" class="chapter">
+      <div class="chapter-number">Bab Delapan</div>
+      <h2 class="chapter-title">Obat di Kantin</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Ada hal-hal yang sengaja disembunyikan bukan karena takut ketahuan. Tapi karena
+        terlalu lelah menjelaskan sesuatu yang tidak bisa dimengerti dengan mudah."</blockquote>
+      <p>Naren hampir tidak memperhatikan kalau saja dia tidak duduk di posisi yang tepat.</p>
+      <p>Hari itu kantin lebih ramai dari biasanya. Naren duduk sendirian di meja pojok dekat pintu. Pikirannya ada di
+        tempat lain. Lalu mata Naren menangkap sesuatu yang tidak sengaja dia lihat.</p>
+      <p>Sena duduk tiga meja di depannya, membelakangi Naren. Tidak ada teman di sekitarnya. Yang membuat Naren
+        berhenti adalah gerakan kecil itu: Sena mengeluarkan sesuatu dari dalam tasnya dengan cepat, melirik ke kiri dan
+        kanan sekali, lalu menelannya cepat dengan air minum.</p>
+      <p>Obat.</p>
+      <p>Mungkin sakit kepala. Mungkin vitamin. Banyak orang minum obat di kantin. Tapi ada sesuatu dalam gestur Sena
+        yang berbeda. Cara dia menyembunyikannya kembali ke dalam tas dengan tergesa. Cara matanya memastikan tidak ada
+        yang melihat sebelum menelannya. Itu bukan gestur orang yang minum obat biasa.</p>
+      <p>Beberapa menit kemudian Sena berbalik dan melihat Naren. Matanya berkedip sekali — mungkin kaget. Sena
+        tersenyum normal. <em>"Ren. Dari kapan di sini?"</em> <em>"Tadi."</em></p>
+      <p>Naren mempertimbangkan untuk bertanya. Satu detik. Dua detik. <em>"Lo tadi minum obat?"</em></p>
+      <p>Sena menatapnya sedetik. Lalu tertawa kecil — terlalu cepat, terlalu ringan. <em>"Vitamin. Gue lagi jaga minum
+          vitamin sekarang."</em></p>
+      <p>Naren mengangguk. <em>"Oh."</em></p>
+      <p>Percakapan berlanjut ke hal lain. Tapi Naren menyimpan momen itu di suatu tempat di belakang kepalanya. Karena
+        orang yang minum vitamin tidak perlu menyembunyikannya seperti itu.</p>
+      <p>Malam itu Reno menghubunginya lewat telepon. <em>"Ren, Bagas minta lo ikut besok. Katanya ada urusan sama anak
+          SMA Bintara."</em></p>
+      <p>Naren terdiam. <em>"Urusan apa?"</em> <em>"Gak tahu detailnya. Tapi dari cara dia bilang… kayaknya bukan yang
+          santai."</em></p>
+      <p>Hening beberapa detik. <em>"Lo mau ikut?"</em> tanya Reno.</p>
+      <p><em>"Gue pikirin dulu,"</em> katanya akhirnya.</p>
+      <p>Reno menghela napas. <em>"Ren. Lo tahu kan kalau lo ikut, lo udah di sana. Gak peduli lo ngelakuin apa."</em>
+      </p>
+      <p>Naren tahu itu. Dia benar-benar tahu. Dan tetap saja, keesokan harinya, dia pergi.</p>
+    </section>
+
+    <!-- BAB 9 -->
+    <section id="bab9" class="chapter">
+      <div class="chapter-number">Bab Sembilan</div>
+      <h2 class="chapter-title">Hal yang Tidak Diucapkan</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kadang yang paling menyakitkan bukan ucapan yang kasar. Tapi hal-hal yang seharusnya
+        dikatakan tapi tidak pernah keluar."</blockquote>
+      <p>Sena tidak sering ikut kegiatan olahraga berat di sekolah. Bukan karena malas. Tapi kalau ada pilihan antara
+        ikut lomba lari atau duduk di tribun, dia hampir selalu memilih tribun.</p>
+      <p>Teman-temannya sudah terbiasa. <em>"Sena emang sering kayak gitu,"</em> kata Ayu satu kali ketika ada yang
+        bertanya kenapa Sena tidak ikut gerak jalan. <em>"Katanya agak sesak kalau terlalu lama di bawah terik."</em>
+      </p>
+      <p>Orang-orang mengangguk dan melanjutkan percakapan. Naren mendengarnya dari sudut kantin. Menatap makanannya
+        sebentar. <em>Sesak kalau terlalu lama di bawah terik? Di usia tujuh belas tahun?</em> Dia tidak menghubungkan
+        itu dengan apa pun. Belum.</p>
+      <p>Yang lebih mendesak adalah percakapan yang terjadi tiga hari lalu. Sena menemuinya di koridor setelah Naren
+        baru saja dimarahi guru karena bolos dua kali minggu lalu.</p>
+      <p><em>"Lo gak apa-apa?"</em> tanya Sena. <em>"Baik."</em> <em>"Kelihatan gak."</em></p>
+      <p>Naren bersandar ke dinding. <em>"Lo kenapa tiba-tiba peduli?"</em></p>
+      <p>Sena tidak tersinggung. Dia hanya menatapnya beberapa detik. <em>"Gue selalu peduli."</em> <em>"Gak
+          kelihatan."</em> <em>"Gue tahu."</em></p>
+      <p>Ada hening yang tidak nyaman di antara mereka. <em>"Lo sekarang sering sama Bagas,"</em> kata Sena akhirnya.
+        Bukan pertanyaan.</p>
+      <p><em>"Iya."</em> <em>"Lo tahu dia itu gimana?"</em> <em>"Emang lo tahu dia gimana?"</em></p>
+      <p>Sena sedikit menggeser pandangannya. <em>"Kakak gue pernah sekelas sama Bagas waktu SMA. Gue tahu cukup
+          banyak."</em></p>
+      <p><em>"Ren,"</em> Sena berkata lebih pelan. <em>"Gue gak sedang menghakimi lo. Gue cuma gak mau lo kena masalah
+          yang sebenarnya bisa lo hindari."</em></p>
+      <p><em>"Lo ngejauh karena Bagas?"</em> Pertanyaan itu keluar lebih tajam dari yang Naren niatkan.</p>
+      <p>Sena menatapnya. Dan untuk satu detik yang singkat, ekspresinya terlihat seperti seseorang yang hampir mengakui
+        sesuatu. Lalu sesuatu menutup di wajahnya. <em>"Bukan cuma itu,"</em> katanya pelan. <em>"Terus?"</em> <em>"Ntar
+          deh."</em></p>
+      <p>Naren pergi duluan. Frustrasinya tidak tahu mau diarahkan ke mana.</p>
+      <p>Di sisi lain koridor, Sena berdiri cukup lama setelah Naren pergi. Tangannya sedikit gemetar — bukan karena
+        emosi, tapi karena memang sering begitu sekarang. Jantungnya kadang berdetak tidak beraturan di momen yang tidak
+        terduga.</p>
+      <p>Minggu depan ada jadwal kontrol ke dokter lagi. Ada hal yang perlu dibicarakan — tentang apakah opsi tindakan
+        yang lebih serius perlu mulai dipertimbangkan.</p>
+      <p>Ada hal-hal yang belum bisa dia ceritakan. Dan sampai dia tahu dengan pasti apa yang akan terjadi selanjutnya,
+        dia tidak mau menambah beban siapa pun. Termasuk Naren.</p>
+    </section>
+
+    <!-- BAB 10 -->
+    <section id="bab10" class="chapter">
+      <div class="chapter-number">Bab Sepuluh</div>
+      <h2 class="chapter-title">Malam yang Salah</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Bukan semua kesalahan dilakukan dengan niat jahat. Kadang kesalahan terbesar terjadi
+        justru karena kita terlalu pasif untuk tidak melakukan apa-apa."</blockquote>
+      <p>Naren tidak bermaksud terlibat sejauh itu. Awalnya Bagas bilang mereka cuma akan "ngobrol" dengan beberapa anak
+        SMA Bintara soal insiden di depan minimarket minggu lalu. Kata Bagas, salah satu anaknya dengan sengaja
+        mendorong Rico sampai jatuh dan tidak ada minta maaf.</p>
+      <p>Naren tahu itu bisa jadi lebih dari sekadar ngobrol. Tapi dia pergi juga. Karena tidak mau dianggap pengecut.
+        Karena sudah terlanjur ada di dalam lingkaran itu.</p>
+      <p>Mereka bertemu di lapangan parkir kosong dekat rel kereta, jam delapan malam. Ada enam orang dari pihak Bagas,
+        empat dari pihak SMA Bintara. Naren berdiri di belakang, merasa lebih seperti penonton yang tidak diundang.</p>
+      <p>Awalnya memang hanya mulut. Tapi sampai salah satu dari pihak seberang mendorong Rico — dan itu membuat Bagas
+        merespons dengan cepat dan keras. Naren tidak memukul siapa pun. Tapi dia ada di sana. Dia melihat. Dia tidak
+        bergerak untuk menghentikan. Dan ketika situasi semakin kacau dan akhirnya bubar karena ada motor patroli yang
+        lewat, Naren berlari bersama yang lain.</p>
+      <p>Itu sudah cukup untuk membuatnya sama bersalahnya.</p>
+      <p>Tiga hari kemudian kabar itu menyebar di sekolah. Bagas dipanggil ke BK. Dan nama Naren, meski tidak ada yang
+        secara langsung melaporkannya, tetap beredar di mulut orang.</p>
+      <p>Reno tidak berkata apa-apa ketika mendengarnya. Dia hanya menatap Naren dengan ekspresi yang lebih menyakitkan
+        dari amarah mana pun.</p>
+      <p><em>"Lo ikut."</em> <em>"Gue gak ngelakuin apa-apa—"</em> <em>"Lo ada di sana,"</em> potong Reno. <em>"Itu
+          cukup."</em></p>
+      <p>Naren tidak membantah. Karena Reno benar.</p>
+      <p>Beberapa hari kemudian mereka bertemu tidak sengaja di tangga sekolah. Sena melihatnya sebentar. Ekspresinya
+        terlalu tenang — tenang yang seperti seseorang yang sudah memutuskan sesuatu.</p>
+      <p><em>"Kabarnya kamu ikut yang di lapangan parkir itu?"</em> <em>"Iya."</em></p>
+      <p>Sena mengangguk pelan. Tidak marah. Justru itu yang lebih menyakitkan — hanya semacam penegasan atas sesuatu
+        yang sudah dia perkirakan. <em>"Hati-hati ya,"</em> kata Sena akhirnya. Lalu dia berjalan naik tangga melewati
+        Naren tanpa menoleh lagi.</p>
+      <div class="note">
+        <div class="note-label">Catatan Naren — malam itu</div>
+        gue gak bisa terus kayak gini.<br>
+        gak tahu bagaimana cara keluarnya tapi gue harus keluar.
+      </div>
+      <p>Sena tidak lagi aktif menyapanya di koridor setelah itu. Dan Naren, untuk pertama kalinya sejak semua ini
+        dimulai, mulai benar-benar memikirkan biaya dari pilihan yang selama ini dia buat. Bukan hanya soal Sena.
+        Tentang siapa dirinya sekarang, dan apakah itu orang yang dia mau jadi.</p>
+    </section>
+
+    <!-- BAB 11 -->
+    <section id="bab11" class="chapter">
+      <div class="chapter-number">Bab Sebelas</div>
+      <h2 class="chapter-title">Serpihan</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kehilangan tidak selalu terasa seperti ledakan. Kadang dia datang seperti kaca yang
+        retak perlahan — tidak terdengar, tapi meninggalkan serpihan di mana-mana."</blockquote>
+      <p>Ada periode di mana Naren dan Sena saling kehilangan tanpa benar-benar berpisah. Mereka masih ada di sekolah
+        yang sama. Masih di koridor yang sama. Masih kadang bertukar tatapan singkat yang tidak berkembang jadi apa-apa.
+        Tapi jarak yang pernah sempat mengecil kembali melebar — kali ini dengan lapisan yang terasa lebih berat dari
+        sebelumnya.</p>
+      <p>Kondisi Sena sedang tidak baik-baik saja. Tidak ada yang tahu itu kecuali dia sendiri dan dokternya. Bulan ini
+        ada dua kali kontrol ke klinik. Hasil terakhir tidak terlalu bagus. Dokternya sudah berbicara tentang
+        kemungkinan tindakan, tentang kota lain, tentang rumah sakit yang lebih spesialis.</p>
+      <p>Dia tetap pergi ke sekolah. Tetap tertawa. Karena itu yang lebih mudah daripada diam di rumah dan memikirkan
+        semuanya.</p>
+      <p>Suatu siang, Dimas duduk di sebelah Naren di kantin dengan ekspresi yang lebih serius dari biasanya. <em>"Lo
+          tahu Sena akhir-akhir ini kelihatan pucat banget?"</em></p>
+      <p>Naren menatapnya. <em>"Kapan?"</em> <em>"Beberapa kali. Kemarin pas pelajaran olahraga dia duduk di pinggir
+          dari awal. Katanya pusing."</em></p>
+      <p><em>"Gue pernah lihat dia minum obat diam-diam di kantin,"</em> kata Naren akhirnya. <em>"Obat apa?"</em>
+        <em>"Dia bilang vitamin."</em></p>
+      <p>Hening sebentar. <em>"Tapi lo gak percaya,"</em> kata Dimas. Bukan pertanyaan. Naren mengangkat bahu. <em>"Gak
+          tahu."</em></p>
+      <p>Dimas mengangguk pelan. <em>"Sena itu orangnya susah minta tolong. Kalau ada sesuatu, dia lebih milih urus
+          sendiri."</em></p>
+      <p>Tapi sekarang jarak di antara mereka terlalu besar untuk sekadar bertanya. Malam itu dia membuka chat mereka
+        yang sudah lama tidak aktif.</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>lo baik-baik aja?
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>iya kok. kenapa?
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>cuma nanya. kelihatan capek belakangan ini
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>biasa aja. lagi banyak kegiatan
+        </div>
+      </div>
+      <p>Naren meletakkan ponsel. Reno yang ada di kamarnya saat itu memperhatikan. <em>"Naren."</em> <em>"Apa."</em>
+        <em>"Lo masih mau terusin sama Bagas?"</em></p>
+      <p>Naren menatap langit-langit kamar cukup lama. <em>"Gak,"</em> kata Naren akhirnya.</p>
+      <p>Reno menatapnya. <em>"Serius?"</em> <em>"Serius."</em> <em>"Karena Sena?"</em></p>
+      <p>Naren menggeleng pelan. <em>"Karena gue udah capek jadi orang yang gue sendiri gak suka."</em></p>
+      <p>Reno diam sebentar. Lalu angguk kecil yang terlihat seperti bentuk paling sederhana dari rasa lega.
+        <em>"Bagus."</em></p>
+    </section>
+
+    <!-- BAB 12 -->
+    <section id="bab12" class="chapter">
+      <div class="chapter-number">Bab Dua Belas</div>
+      <h2 class="chapter-title">Belajar Pergi</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Meninggalkan lingkungan yang salah bukan sesederhana berbalik dan berjalan. Kadang
+        kita harus melewati satu percakapan yang tidak nyaman dulu."</blockquote>
+      <p>Naren memberitahu Bagas pada sore Jumat, di warung yang sama di mana mereka pertama kali bertemu. Dia langsung
+        bicara: dia keluar dari lingkaran mereka. Gak mau ikut urusan apa pun lagi.</p>
+      <p>Bagas mendengarkannya dengan tenang yang tidak terasa seperti tenang yang nyaman. <em>"Lo serius?"</em>
+        <em>"Serius."</em> <em>"Gara-gara insiden kemarin?"</em> <em>"Gara-gara banyak hal."</em></p>
+      <p>Bagas meneguk minumannya. Lalu tersenyum — bukan senyum yang hangat. <em>"Oke. Terserah lo."</em></p>
+      <p>Itu saja. Naren berdiri dan pergi. Di luar, angin sore terasa lebih segar dari yang dia ingat.</p>
+      <p>Rico mengirim pesan singkat beberapa jam kemudian:</p>
+      <div class="chat-wrap">
+        <div class="chat chat-left">
+          <div class="chat-name">Rico</div>gue dengar lo keluar. gue ngerti. gak ada masalah dari gue
+        </div>
+      </div>
+      <p>Naren membalas: <em>"Thanks."</em></p>
+      <p>Reno yang mendengar kabarnya malam itu menepuk bahunya. <em>"Akhirnya."</em> <em>"Lo gak perlu sok
+          dramatis."</em> <em>"Gue genuinely lega."</em> Naren tertawa kecil. Untuk pertama kalinya dalam beberapa
+        minggu, tawanya terasa ringan.</p>
+      <p>Beberapa hari kemudian, Dimas muncul di hadapan Naren saat jam istirahat. <em>"Lo tahu gak, Sena kayaknya
+          denger lo udah lepas dari Bagas."</em></p>
+      <p><em>"Dari mana lo tahu?"</em> <em>"Gue lihat ekspresinya waktu ada yang nyebutin nama lo tadi."</em>
+        <em>"Ekspresi apa?"</em> <em>"Kayak orang yang mau bilang sesuatu tapi gak jadi."</em></p>
+      <p>Malam itu Naren membuka chat Sena. Akhirnya hanya satu kalimat yang dia kirim:</p>
+      <div class="chat-wrap">
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>gue udah keluar dari lingkaran Bagas. bukan karena disuruh siapa-siapa
+        </div>
+      </div>
+      <p>Dia menunggu. Jam sebelas malam, balasan masuk:</p>
+      <div class="chat-wrap">
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>gue tahu. gue seneng denger itu, Ren
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>kita bisa ngobrol gak. beneran ngobrol
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>kapan?
+        </div>
+        <div class="chat chat-right">
+          <div class="chat-name">Naren</div>terserah lo
+        </div>
+        <div class="chat chat-left">
+          <div class="chat-name">Sena</div>besok sore. perpustakaan kota. jam 4
+        </div>
+      </div>
+      <p>Naren tersenyum. Kecil, tapi nyata. <em>"Oke."</em></p>
+    </section>
+
+    <!-- BAB 13 -->
+    <section id="bab13" class="chapter">
+      <div class="chapter-number">Bab Tiga Belas</div>
+      <h2 class="chapter-title">Setelah Bagas</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Berubah bukan berarti langsung menjadi lebih baik. Kadang berubah hanya berarti kita
+        akhirnya berhenti berpura-pura bahwa kita baik-baik saja."</blockquote>
+      <p>Perpustakaan kota pukul setengah lima sore selalu sepi dengan cara yang nyaman. Naren sudah ada di sana sejak
+        pukul empat kurang — dia yang kali ini datang lebih awal, membalik kebiasaan lama.</p>
+      <p>Sena datang tepat waktu. Memakai jaket hoodie abu-abu dan headset putih yang menggantung di leher. Wajahnya
+        terlihat lebih pucat dari yang Naren ingat dari beberapa minggu lalu. Tapi senyumnya sama.</p>
+      <p><em>"Lo yang dateng duluan,"</em> kata Sena sambil menarik kursi. <em>"Biar gak disebut selalu telat."</em>
+        Sena tertawa kecil. <em>"Satu poin buat lo."</em></p>
+      <p>Mereka duduk berhadapan. Di depan mereka hanya satu cangkir teh dari vending machine. Sena memperhatikan itu.
+        <em>"Lo harusnya beli dua."</em> <em>"Gak tahu lo masih mau."</em> <em>"Gue selalu mau teh dari sini."</em></p>
+      <p>Naren berdiri dan mengambil cangkir kedua. Ketika dia kembali, suasana sedikit mencair. Mereka ngobrol tentang
+        hal-hal kecil dulu — tugas yang menumpuk, guru baru yang cara ngajarnya membingungkan, Dimas yang baru saja
+        menyalahkan kursinya atas nilai fisika yang jelek.</p>
+      <p>Lama-lama, setelah tawa kecil itu mereda, Sena yang memulai lebih dulu.</p>
+      <p><em>"Gue seneng lo keluar dari lingkaran Bagas."</em></p>
+      <p><em>"Lo sudah bilang itu."</em> <em>"Gue mau bilang lagi. Gue tahu lo mungkin ngerasa gue menghakimi lo waktu
+          itu."</em> <em>"Sedikit,"</em> akui Naren jujur. <em>"Gue minta maaf."</em> <em>"Gak perlu."</em>
+        <em>"Perlu."</em></p>
+      <p>Sena mengangkat kepala. <em>"Lo bukan orang yang perlu dicurigai terus. Lo hanya lagi di tempat yang salah
+          waktu itu."</em></p>
+      <p><em>"Sen, kenapa dulu lo tiba-tiba menjauh? Beneran nanya."</em></p>
+      <p>Sena tidak langsung menjawab. Jarinya memainkan ujung cangkir pelan. <em>"Banyak hal,"</em> katanya.</p>
+      <p><em>"Iya, tapi banyak hal itu apa?"</em></p>
+      <p>Sena menatapnya. Ada sesuatu yang bergerak di matanya — seolah ada jawaban yang sudah sampai di tepi bibir,
+        tapi ditarik kembali. <em>"Gue lagi banyak ngurus hal pribadi waktu itu. Gue gak mau semuanya tercampur
+          aduk."</em></p>
+      <p><em>"Ren, ada hal-hal yang belum bisa gue jelasin sekarang. Tapi gue janji bukan karena lo."</em></p>
+      <p>Naren menatapnya lama. Dia bisa melihat bahwa Sena sedang jujur — ada sesuatu yang nyata dan berat di balik
+        kata-kata itu.</p>
+      <p><em>"Oke,"</em> kata Naren akhirnya. Lebih lembut. <em>"Kalau sudah siap, cerita."</em></p>
+      <p>Sena tersenyum. Dan kali ini senyumnya terasa lebih berat dari sebelumnya.</p>
+      <p>Mereka menghabiskan satu jam lagi di perpustakaan itu. Tidak semua hal selesai. Tapi ada sesuatu yang bergerak
+        ke tempat yang lebih baik. Sesuatu yang diam-diam membuat Naren merasa bahwa mungkin, kali ini, dia tidak harus
+        menyerah.</p>
+      <p>Tapi dia tidak tahu bahwa jam kontrol Sena berikutnya adalah besok pagi. Dan dokternya akan menyampaikan
+        sesuatu yang akan mengubah segalanya.</p>
+    </section>
+
+    <!-- BAB 14 -->
+    <section id="bab14" class="chapter">
+      <div class="chapter-number">Bab Empat Belas</div>
+      <h2 class="chapter-title">Terlambat Tapi Nyata</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Ada momen ketika seseorang akhirnya siap. Dan momen itu tidak selalu datang di waktu
+        yang tepat."</blockquote>
+      <p>Sena mulai lebih sering pamit lebih awal dari sekolah. Bukan setiap hari, tapi cukup sering. Selalu ada alasan
+        singkat: <em>"Ada janji."</em> Teman-temannya tidak terlalu mempertanyakan. Naren memperhatikan. Tapi karena
+        mereka baru saja menemukan jalan untuk bicara kembali, dia tidak mau langsung mengisi ruang itu dengan
+        pertanyaan yang mungkin terasa seperti interogasi.</p>
+      <p>Yang dia tidak tahu adalah bahwa "janji" itu selalu ke klinik yang sama. Dokter Sena sudah dua kali menyebut
+        kata yang Sena belum siap untuk diucapkan kepada siapa pun: <em>tindakan</em>.</p>
+      <p>Di sekolah, Sena duduk di sebelah Naren di kantin tanpa diundang. Bukan hal yang luar biasa sekarang. <em>"Lo
+          ada rencana akhir pekan ini?"</em> <em>"Gak ada."</em> <em>"Mau temenin gue ke toko buku?"</em> <em>"Lo beli
+          buku serius atau cuma mau jalan?"</em> <em>"Keduanya."</em> <em>"Oke."</em></p>
+      <p>Sabtu siang mereka pergi ke toko buku di pusat kota. Sena menghabiskan hampir satu jam di bagian fiksi sambil
+        membaca halaman pertama berbagai buku. Naren mengikuti di belakang — tidak buru-buru, tidak mengeluh, hanya ada
+        di sana.</p>
+      <p>Di kedai kopi kecil di lantai dua, mereka duduk berhadapan. Sena memesan coklat panas meski cuaca sedang tidak
+        terlalu dingin.</p>
+      <p><em>"Ren,"</em> kata Sena tiba-tiba. <em>"Hm?"</em></p>
+      <p>Sena menatap cangkirnya. <em>"Kalau suatu saat gue gak ada di sini… lo gak akan ngerasa terlalu kehilangan
+          kan?"</em></p>
+      <p>Naren berhenti minum. <em>"Maksudnya?"</em> Sena tersenyum — terlalu cepat, terlalu ringan. <em>"Gak ada, cuma
+          nanya random."</em></p>
+      <p>Tapi pertanyaan itu tidak terasa random bagi Naren. Ada sesuatu dalam caranya mengucapkannya.</p>
+      <p><em>"Lo nanya itu ke orang yang salah,"</em> kata Naren pelan. <em>"Salah gimana?"</em> <em>"Karena gue bakal
+          ngerasa kehilangan."</em></p>
+      <p>Hening sebentar. Di sekitar mereka, suara kedai kopi berputar pelan.</p>
+      <p>Naren, yang selama ini terlalu lama menunggu waktu yang tepat, akhirnya memilih untuk tidak menunggu lagi.</p>
+      <p><em>"Sen."</em> <em>"Hm?"</em> <em>"Gue suka sama lo."</em></p>
+      <p>Kalimat itu keluar tanpa dramaturgi. Hanya fakta yang sudah terlalu lama dia tahan.</p>
+      <p>Sena menatapnya. Ekspresinya tidak langsung bisa dibaca. Ada sesuatu yang lewat di matanya — hangat, tapi juga
+        sesuatu yang terasa seperti rasa sakit.</p>
+      <p><em>"Ren…"</em> <em>"Lo gak perlu langsung jawab. Gue cuma mau lo tahu."</em></p>
+      <p>Sena menunduk. Jarinya memainkan sisi cangkir pelan. Ada beberapa detik di mana Naren bisa mendengar jantungnya
+        sendiri. Lalu Sena berkata dengan sangat pelan: <em>"Gue juga punya perasaan yang sama."</em></p>
+      <p>Naren merasa sesuatu bergerak di dadanya. Tapi sebelum dia sempat merespons, Sena melanjutkan: <em>"Tapi Ren…
+          ada hal yang perlu lo tahu dulu."</em></p>
+      <p><em>"Hal apa?"</em> <em>"Besok gue ada kontrol ke dokter."</em> Naren mengernyit pelan. <em>"Kontrol?"</em>
+        <em>"Untuk jantung gue."</em></p>
+    </section>
+
+    <!-- BAB 15 -->
+    <section id="bab15" class="chapter">
+      <div class="chapter-number">Bab Lima Belas</div>
+      <h2 class="chapter-title">Klinik</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kamu tidak selalu bisa melindungi orang yang kamu sayangi dari rasa sakit. Kadang
+        yang bisa kamu lakukan hanyalah ada di sana ketika mereka akhirnya tidak kuat menyimpannya sendiri."
+      </blockquote>
+      <p>Sebelum Sena sempat menjelaskan lebih jauh hari itu, ponselnya berbunyi. Ibunya menelepon — ada keperluan
+        mendadak. Sena meminta maaf dan berjanji akan menjelaskan semuanya. Mereka berpisah di depan toko buku dengan
+        cara yang tidak selesai, dan kalimat "untuk jantung gue" mengambang di antara mereka tanpa bisa dilanjutkan.</p>
+      <p>Naren pulang dengan kepala penuh. Dia tidak bisa tidur malam itu. Pikirannya terus berputar pada kalimat itu —
+        <em>kontrol untuk jantung gue</em>. Terlalu spesifik untuk diabaikan. Terlalu serius untuk disamakan dengan
+        pemeriksaan biasa.</p>
+      <p>Sena tidak mengirim pesan malam itu. Keesokan harinya, Senin, dia masuk sekolah seperti biasa. Terlihat normal.
+        Naren beberapa kali menangkap matanya di koridor, tapi Sena selalu mengalihkan pandangan lebih dulu — seperti
+        seseorang yang sedang menunda sesuatu.</p>
+      <p>Hari Rabu sore, Naren sedang berjalan menuju parkiran sekolah ketika dia melihat sesuatu yang membuat
+        langkahnya terhenti.</p>
+      <p>Di sisi lain jalan, di depan sebuah klinik yang tidak terlalu jauh dari sekolah, Sena baru saja keluar dari
+        pintu kaca. Dia memegang selembar kertas — seperti hasil lab atau surat rujukan. Ekspresinya ketika menatap
+        kertas itu bukan ekspresi orang yang baru selesai pemeriksaan biasa. Ada ketegangan di sana. Ada sesuatu yang
+        berat yang sedang dia proses sendirian di trotoar itu.</p>
+      <p>Naren berdiri cukup lama tanpa bergerak. Memperhatikan dari seberang jalan.</p>
+      <p>Lalu Sena melipat kertas itu, memasukkannya ke dalam tas, dan menegakkan punggungnya. Sesuatu di gestur itu
+        terlihat seperti seseorang yang sedang menyiapkan diri.</p>
+      <p>Tepat saat Sena berbalik, matanya bertemu dengan Naren. Beberapa detik. Keduanya tidak bergerak.</p>
+      <p>Lalu Sena menyeberang jalan dengan langkah yang terlihat terlalu casual dan tersenyum ketika berdiri di depan
+        Naren. <em>"Lo dari mana?"</em> <em>"Dari parkiran."</em> Naren menatapnya. <em>"Lo dari klinik itu?"</em></p>
+      <p>Sena tidak langsung menjawab. <em>"Iya."</em> <em>"Kontrol jantung?"</em></p>
+      <p>Ada jeda. <em>"Iya."</em></p>
+      <p>Naren menatapnya. <em>"Lo gak apa-apa?"</em></p>
+      <p>Sena tersenyum — dan Naren sudah cukup mengenal Sena untuk tahu bahwa senyum itu bukan jawaban yang sebenarnya.
+        <em>"Biasa aja."</em></p>
+      <p>Mereka berdiri di trotoar itu cukup lama tanpa bicara lebih lanjut. Angin sore membawa bau aspal yang sedikit
+        basah.</p>
+      <p>Naren menarik napas. <em>"Sen, kita perlu ngobrol."</em> <em>"Gue tahu."</em> <em>"Bukan besok. Sekarang."</em>
+      </p>
+      <p>Sena menatapnya lama. Lalu mengangguk. Kecil, tapi pasti.</p>
+      <p>Mereka berjalan ke taman kecil yang tidak jauh dari klinik — cukup sepi untuk bicara tanpa ada yang mengganggu.
+        Naren duduk di bangku beton di bawah pohon. Sena duduk di sebelahnya.</p>
+      <p>Lama sekali tidak ada yang memulai.</p>
+      <p>Akhirnya Naren berkata: <em>"Cerita."</em></p>
+      <p>Dan setelah sekian lama menyimpannya sendirian, Sena akhirnya bercerita.</p>
+    </section>
+
+    <!-- BAB 16 -->
+    <section id="bab16" class="chapter">
+      <div class="chapter-number">Bab Enam Belas</div>
+      <h2 class="chapter-title">Jantung yang Terlalu Lelah</h2>
+      <div class="chapter-divider"></div>
+      <blockquote class="epigraph">"Kejujuran yang terlambat tetap lebih baik dari kebohongan yang sempurna. Tapi kadang
+        terlambat artinya kita tidak lagi punya waktu untuk melakukan apa yang seharusnya."</blockquote>
+      <p>Namanya Penyakit Jantung Bawaan. Sena sudah tahu sejak usia sebelas tahun — ketika dokter menjelaskan kepada
+        ibunya dengan kalimat-kalimat yang terlalu panjang dan terlalu berat untuk dimengerti anak seusia itu. Sena
+        hanya duduk di kursi periksa sambil mengayunkan kakinya dan menunggu sampai semuanya selesai.</p>
+      <p>Selama bertahun-tahun kondisinya relatif terkontrol. Obat teratur, aktivitas dibatasi, dan kontrol rutin yang
+        sudah menjadi bagian dari ritme hidupnya. Sena belajar hidup bersama itu dengan cara yang paling praktis: tidak
+        terlalu banyak berpikir, tidak terlalu banyak menjelaskan, dan bersikap normal sebisa mungkin supaya orang lain
+        tidak terlalu banyak bereaksi.</p>
+      <p>Yang berubah adalah tahun ini. Kondisinya mulai memburuk lebih cepat dari yang diperkirakan. Ada pembesaran di
+        salah satu ruang jantung. Aritmia yang semakin sering muncul. Dokternya sudah berbicara tentang kemungkinan
+        tindakan di fasilitas yang lebih besar, di kota lain.</p>
+      <p>Sena bercerita itu semua dengan suara yang lebih tenang dari yang Naren bayangkan. Tanpa tangis. Hampir tanpa
+        getaran. Hanya fakta-fakta yang disampaikan satu per satu, seperti seseorang yang sudah berlatih menceritakannya
+        dan akhirnya menemukan pendengar yang tepat.</p>
+      <p>Naren tidak berkata apa-apa selama beberapa waktu. Hanya mendengarkan. Ketika Sena selesai, dia masih duduk
+        diam sambil menatap rumput di depan bangku mereka.</p>
+      <p><em>"Berapa lama lo tahu?"</em> Suaranya pelan. <em>"Sejak SD."</em> <em>"Dan lo gak pernah bilang siapa pun di
+          sekolah?"</em></p>
+      <p><em>"Mau ngapain?"</em> Sena mengangkat bahu. <em>"Supaya semua orang lihat gue beda? Supaya ada yang tiba-tiba
+          jadi terlalu hati-hati di sekitar gue? Gue gak mau."</em></p>
+      <p>Naren akhirnya menoleh. <em>"Makanya lo menjauh dari gue?"</em></p>
+      <p>Sena menatapnya. Lalu perlahan mengangguk. <em>"Gue tahu lo punya perasaan ke gue. Dan gue gak mau lo masuk ke
+          situasi yang gak bisa gue janjikan apa-apa. Gue gak tahu kapan kondisi gue akan memburuk. Gue gak tahu apakah
+          gue harus pindah. Gue gak bisa ngajak lo ke dalam ketidakpastian itu."</em></p>
+      <p><em>"Itu keputusan lo sendiri,"</em> kata Naren. Ada sesuatu dalam suaranya yang bukan marah — lebih seperti
+        seseorang yang baru saja mengerti sesuatu yang berat. <em>"Lo gak pernah tanya gue mau atau enggak."</em></p>
+      <p>Sena mengalihkan pandangan. <em>"Gue tahu kalau gue tanya, lo akan bilang mau. Dan itu yang bikin gue gak
+          tanya."</em></p>
+      <p>Ada logika yang menyakitkan dalam kalimat itu. Dan Naren cukup jujur untuk mengakui bahwa Sena mungkin tidak
+        sepenuhnya salah.</p>
+      <p><em>"Dokternya bilang apa hari ini?"</em></p>
+      <p>Sena menarik napas. <em>"Mereka perlu tindakan dalam waktu dekat. Satu atau dua bulan ke depan. Dan ada
+          kemungkinan gue perlu ke Jakarta. Fasilitasnya lebih lengkap di sana."</em></p>
+      <p>Hening. Angin lewat pelan di antara mereka. Langit mulai kemerahan.</p>
+      <p><em>"Makanya lo tiba-tiba nanya 'kalau suatu saat gue gak ada di sini' itu?"</em> tanya Naren.</p>
+      <p>Sena tidak menjawab. Tapi jawaban itu sudah ada di matanya.</p>
+      <p>Naren menunduk. Dadanya terasa sesak dengan cara yang berbeda dari yang pernah dia rasakan sebelumnya — rasa
+        sakit karena mengerti bahwa seseorang sudah menyimpan semua ini sendirian terlalu lama, dan sebagian alasannya
+        adalah demi melindungi dirinya.</p>
+      <p><em>"Gue marah,"</em> kata Naren akhirnya.</p>
+      <p>Sena menatapnya. <em>"Bukan karena lo sakit. Gue marah karena lo pikir lo harus ngelewatin ini sendirian."</em>
+      </p>
+      <p>Sena menunduk. Ada sesuatu yang bergerak di sudut matanya. <em>"Ren…"</em></p>
+      <p><em>"Gue tahu lo punya alasan. Gue ngerti. Tapi lo mestinya tahu bahwa gue bisa handle itu."</em></p>
+      <p><em>"Gue gak mau lo handle itu,"</em> kata Sena pelan. <em>"Gue mau lo punya hidup yang gak ada beban gue di
+          dalamnya."</em></p>
+      <p><em>"Lo bukan beban."</em> <em>"Lo belum tahu seperti apa kalau kondisi gue memburuk."</em></p>
+      <p>Mereka saling menatap. Ada banyak hal yang ingin dikatakan dari kedua pihak.</p>
+      <p>Akhirnya Naren berkata: <em>"Gue suka sama lo. Gue sudah bilang itu. Dan gue mau lo tahu bahwa perasaan itu gak
+          berubah setelah semua yang lo ceritain."</em></p>
+      <p>Sena menutup matanya sebentar. Ketika membukanya lagi, ada air mata yang tidak turun — ditahan dengan susah
+        payah.</p>
+      <p><em>"Gue juga punya perasaan yang sama ke lo."</em> Suaranya agak retak di ujungnya. <em>"Dari dulu. Bukan baru
+          sekarang."</em></p>
+      <p><em>"Terus—"</em></p>
+      <p><em>"Tapi Ren,"</em> Sena memotong. <em>"Gue mau pindah bulan depan. Tindakannya di Jakarta. Dan setelah itu
+          gue gak tahu berapa lama. Gue gak tahu apa yang terjadi. Gue gak bisa minta lo tunggu sesuatu yang bahkan gue
+          sendiri gak tahu bentuknya."</em></p>
+      <p>Kalimat itu jatuh di antara mereka dengan berat yang tidak bisa diangkat oleh siapa pun.</p>
+      <p>Naren menatap jalan di depan mereka. Pikirannya ingin mencari bantahan — ingin bilang tidak masalah, bahwa dia
+        mau menunggu. Tapi dia juga tahu bahwa Sena tidak pernah mengucapkan kalimat seperti itu dengan ringan.</p>
+      <p><em>"Gue mau ada buat lo,"</em> kata Naren akhirnya. <em>"Bukan sebagai pacar kalau lo gak mau. Tapi sebagai
+          seseorang yang ada."</em></p>
+      <p>Sena menatapnya lama. <em>"Lo orang yang paling bikin gue takut kehilangan,"</em> kata Sena pelan. <em>"Karena
+          gue gak tahu apakah gue akan ada cukup lama untuk—"</em></p>
+      <p>Kalimatnya putus. <em>"Lo gak perlu selesaikan itu,"</em> kata Naren.</p>
+      <p>Mereka duduk di sana sampai langit betul-betul gelap. Tidak membicarakan rencana. Tidak membuat janji yang
+        tidak bisa mereka tepati. Hanya duduk bersama — dua orang yang akhirnya saling jujur, di saat yang mungkin
+        terlalu terlambat untuk memulai, tapi tidak terlambat untuk sekadar ada.</p>
+      <p>Ketika Sena akhirnya berdiri dan bersiap pulang, dia berhenti sebentar. <em>"Ren."</em> <em>"Hm."</em>
+        <em>"Terima kasih. Buat semuanya."</em></p>
+      <p>Naren tidak langsung menjawab. Tenggorokannya terasa tidak cukup lapang untuk kata-kata yang besar. Jadi dia
+        hanya bilang: <em>"Jaga diri."</em></p>
+      <p>Sena mengangguk. Lalu berbalik dan berjalan menuju jalan besar, headset putihnya kembali di telinga, seperti
+        yang selalu dia lakukan. Naren menonton sampai bayangannya hilang di tikungan. Dan baru di saat itulah,
+        sendirian di taman yang mulai gelap, dia akhirnya mengizinkan semuanya terasa seberat yang sebenarnya.</p>
+      <div class="note">
+        <div class="note-label">Catatan Sena — malam yang sama</div>
+        Kalau kamu baca ini suatu saat nanti, Ren —<br>
+        gue gak menyesal kamu tahu.<br>
+        Gue cuma menyesal tidak cerita lebih awal.<br>
+        Mungkin kita akan punya lebih banyak waktu.<br>
+        Atau mungkin tidak.<br>
+        Tapi setidaknya kita menghabiskan waktu itu dengan jujur.
+      </div>
+    </section>
+
+<!-- EPILOG -->
+<section id="epilog" class="chapter">
+  <div class="chapter-number">Epilog</div>
+  <h2 class="chapter-title">Surat yang Tidak Terkirim</h2>
+  <div class="chapter-divider"></div>
+  <blockquote class="epigraph">"Beberapa hal memang tidak punya penutup yang sempurna. Kadang yang tersisa hanyalah kalimat yang tidak sempat diucapkan dan orang yang tidak sempat kita miliki."</blockquote>
+  <p>Sena pergi ke Jakarta tiga minggu setelah malam di taman itu.</p>
+  <p>Bukan meninggal dunia. Itu yang selalu aku tekankan ke diriku sendiri. Sena pergi untuk tindakan. Pergi untuk pengobatan yang lebih serius. Pergi karena kondisinya membutuhkan sesuatu yang tidak bisa disediakan di kota kecil ini.</p>
+  <p>Tapi "pergi" tetap terasa seperti kehilangan. Bahkan ketika kamu tahu orang itu masih ada di suatu tempat di dunia yang sama.</p>
+  <p>Beberapa hari sebelum dia berangkat, kami bertemu sekali lagi. Di perpustakaan kota — tentu saja. Di pojok yang sama, dengan dua cangkir teh dari vending machine yang sama. Tidak banyak yang kami bicarakan yang penting secara teknis. Kami hanya ada di sana bersama untuk beberapa jam terakhir.</p>
+  <p>Sena memberiku sebuah buku yang sudah dia baca. Di halaman pertama, dia menulis satu kalimat pendek dengan pulpen hitamnya:</p>
+  <div class="note">
+    <div class="note-label">Tulisan di halaman pertama buku</div>
+    Buat Ren — yang selalu ada di tempat yang tepat, tapi di waktu yang belum tepat.<br>
+    Makasih ya. — S.
+  </div>
+  <p>Aku membaca itu beberapa kali di jalan pulang. Lalu beberapa kali lagi sebelum tidur. Lalu menyimpan buku itu di meja belajar di tempat yang bisa aku lihat setiap hari.</p>
+  <p>Ini bukan cerita yang berakhir dengan happy ending. Itu yang sudah aku bilang dari awal.</p>
+  <p>Tapi ini juga bukan cerita yang berakhir dengan kehancuran total. Karena kami sempat jujur. Kami sempat duduk di taman dan mengatakan hal-hal yang selama ini kami simpan terlalu rapi di dalam. Kami tidak sempat mulai, tapi kami cukup beruntung untuk tidak berakhir dengan penyesalan diam-diam yang tidak pernah bisa diselesaikan.</p>
+  <p>Reno bilang aku terlalu romantis soal ini. Mungkin iya. Tapi ada bagian dari aku yang lebih memilih menyimpan kenangan tentang Sena seperti itu — bukan sebagai cerita yang gagal, tapi sebagai cerita yang tidak punya waktu yang cukup.</p>
+  <p>Kami masih sesekali mengirim pesan. Tidak setiap hari — kondisinya tidak selalu memungkinkan. Tapi sesekali, ketika dia mendengar lagu yang mengingatkannya pada sesuatu, atau ketika aku melihat langit yang terlalu oranye untuk tidak dikirim ke siapa pun, kami masih saling ada.</p>
+  <div class="chat-wrap">
+    <div class="chat chat-left"><div class="chat-name">Sena</div>langit di sini cantik hari ini. beda sama di sana ya</div>
+    <div class="chat chat-right"><div class="chat-name">Naren</div>di sini juga cantik. kirim fotonya</div>
+    <div class="chat chat-left"><div class="chat-name">Sena</div>[foto langit sore dengan awan tipis dan matahari di tepi bangunan]</div>
+    <div class="chat chat-right"><div class="chat-name">Naren</div>bagus. lo gimana?</div>
+    <div class="chat chat-left"><div class="chat-name">Sena</div>lagi baik. dokternya bilang prosesnya berjalan. lo gimana</div>
+    <div class="chat chat-right"><div class="chat-name">Naren</div>oke. kangen</div>
+    <div class="chat chat-left"><div class="chat-name">Sena</div>aku juga</div>
+  </div>
+  <p>Ada hal-hal yang tidak berubah. Sena masih mengirim lagu tanpa penjelasan. Aku masih membalasnya dengan satu kata. Kami masih tidak terlalu pandai mengatakan hal-hal yang besar dengan cara yang besar.</p>
+  <p>Dan mungkin itu cukup. Mungkin untuk sementara, itu adalah versi terbaik dari apa yang bisa kami miliki.</p>
+  <p>Aku tidak tahu kapan — atau apakah — kami akan berada di kota yang sama lagi. Ada bagian yang menakutkan dalam ketidakpastian itu. Bagian yang kadang membuatku terbangun malam dan tidak bisa tidur lagi.</p>
+  <p>Tapi aku juga belajar satu hal dari semua ini:</p>
+  <p>Mencintai seseorang tidak selalu berarti memilikinya. Kadang mencintai seseorang artinya kamu hadir di bagian hidup mereka yang paling berat, meski hanya dari jarak yang tidak bisa kamu dekatkan lagi.</p>
+  <p>Kadang mencintai seseorang artinya kamu biarkan mereka pergi ke tempat yang lebih baik untuknya, meski kamu ingin sekali memintanya tinggal.</p>
+  <p>Ini bukan akhir yang aku inginkan. Tapi ini akhir yang aku mengerti sekarang.</p>
+  <p>Sena pernah tanya: kalau suatu saat dia tidak ada di sini, apakah aku akan terlalu kehilangan? Jawabanku tidak berubah.</p>
+  <p>Iya. Gue kehilangan. Tapi gue juga bersyukur pernah mengenalnya.</p>
+  <hr style="margin:40px 0;border:none;border-top:1px solid var(--line);">
+  <div class="note">
+    <div class="note-label">Surat yang tidak pernah dikirim — Naren, enam bulan kemudian</div>
+    Sen,<br><br>
+    Gue nulis ini bukan karena ada kabar besar. Gue nulis ini karena tadi sore turun hujan dan gue ingat kamu.<br><br>
+    Gue ingat hujan di perpustakaan. Gue ingat kamu kasih gue payung biru itu. Gue ingat cara kamu ketawa sambil pura-pura gak ada apa-apa, padahal gue tahu ada banyak yang sedang kamu tahan.<br><br>
+    Gue seharusnya lebih berani lebih awal. Gue tahu itu. Gue terlalu lama nunggu waktu yang "tepat" dan gak sadar bahwa waktu yang tepat itu mungkin gak pernah ada — yang ada cuma momen-momen kecil yang harus kita ambil sebelum lewat.<br><br>
+    Tapi gue gak menyesal kenal kamu. Gue gak menyesal semua yang terjadi, meski banyak yang gak sesuai harapan. Karena dari semua itu, gue belajar lebih banyak tentang diri gue sendiri daripada beberapa tahun sebelumnya.<br><br>
+    Semoga kamu baik. Semoga jantung kamu kuat. Semoga suatu hari nanti kita ketemu lagi di kondisi yang lebih tenang — di mana gak ada yang perlu disembunyikan, gak ada waktu yang terlalu sempit.<br><br>
+    Kalau belum, ya sudah. Gue tetap di sini.<br><br>
+    — Naren
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section id="quotes" class="page-section chapter">
+  <div class="section-label">Penutup</div>
+  <h2 class="section-title">Quotes</h2>
+  <div class="quote-block">
+    <p>"Kadang seseorang masuk ke hidup kita bukan lewat hal besar. Tapi lewat obrolan kecil yang bahkan nyaris dilupakan."</p>
+    <div class="q-attr">— Prolog</div>
+  </div>
+  <div class="quote-block">
+    <p>"Kita tidak selalu memilih lingkungan yang buruk karena bodoh. Kadang kita memilihnya karena kita sedang sangat butuh untuk tidak sendirian."</p>
+    <div class="q-attr">— Bab Lima</div>
+  </div>
+  <div class="quote-block">
+    <p>"Ada hal-hal yang sengaja disembunyikan bukan karena takut ketahuan. Tapi karena terlalu lelah menjelaskan sesuatu yang tidak bisa dimengerti dengan mudah."</p>
+    <div class="q-attr">— Bab Delapan</div>
+  </div>
+  <div class="quote-block">
+    <p>"Kehilangan tidak selalu terasa seperti ledakan. Kadang dia datang seperti kaca yang retak perlahan — tidak terdengar, tapi meninggalkan serpihan di mana-mana."</p>
+    <div class="q-attr">— Bab Sebelas</div>
+  </div>
+  <div class="quote-block">
+    <p>"Mencintai seseorang tidak selalu berarti memilikinya. Kadang mencintai seseorang artinya kamu hadir di bagian hidup mereka yang paling berat."</p>
+    <div class="q-attr">— Epilog</div>
+  </div>
+  <div class="quote-block">
+    <p>"Gue gak menyesal kenal kamu. Bukan meski semua yang terjadi, tapi justru karena semua yang terjadi."</p>
+    <div class="q-attr">— Surat yang Tidak Terkirim</div>
+  </div>
+</section>
+
+<!-- TENTANG PENULIS -->
+<section id="about" class="page-section chapter">
+  <div class="section-label">Profil</div>
+  <h2 class="section-title">Tentang Penulis</h2>
+  <div class="about-body">
+    <p>Haii… aku Arsyil. Kalau udah kenal ya berarti kita temen halaman ini, kalau belum ya salam kenal dulu aja.</p>
+    <p>Aku gak nyangka bisa bikin novel. Ini novel pertama aku, dan agak aneh sih karena dulu aku bukan tipe orang yang suka baca buku. Tapi sekarang malah orang yang gak suka baca buku ini yang malah bikin cerita sendiri.</p>
+    <p>Aku lahir tahun 2008, suka musik dan suka gambar. Biasanya kalau lagi banyak isi di kepala, aku lebih sering gambar sambil dengerin musik daripada langsung nulis. Nulisnya juga baru-baru ini aja aku seriusin, jadi ya masih berantakan sana sini, tapi aku nikmatin prosesnya.</p>
+    <p>Buat kamu yang udah baca sampai akhir, makasih banyak ya. Dan untuk kamu yang selalu jadi alasan kenapa beberapa bagian di cerita ini terasa terlalu nyata, aku harap kamu tau… walaupun gak pernah aku ucapin langsung, kamu selalu ada di setiap hal yang aku tulis.</p>
+    <p>Sampai ketemu lagi di cerita berikutnya… kalau aku jadi nulis lagi.</p>
+    <p>Instagram: <strong>@d_archyll</strong> &nbsp;·&nbsp; TikTok: <strong>@calthe_</strong></p>
+  </div>
+</section>
+
+</main>
+
+<button id="back-top" title="Kembali ke atas">↑</button>
+
+<footer>
+  <div class="footer-title">Linger</div>
+  <p>De' Arsyil Putera Pertama &nbsp;·&nbsp; Copyright ©️ 2026</p>
+  <p style="margin-top:6px;font-size:.72rem;color:#c0b090">"Kita tidak sempat. Tapi kita sempat jujur."</p>
+</footer>
+
+<script>
+  const btn = document.getElementById('toggle-btn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  btn.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+  sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); }));
+
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('#sidebar nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector('#sidebar nav a[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  const backTop = document.getElementById('back-top');
+  window.addEventListener('scroll', () => backTop.classList.toggle('visible', window.scrollY > 400));
+  backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>
