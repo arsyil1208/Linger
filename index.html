@@ -9,14 +9,14 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap');
 
     :root {
-      --bg: #faf8f4;
-      --paper: #fffdf9;
+      --bg: #ffffff;
+      --paper: #ffffff;
       --text: #2c2416;
       --muted: #7a6f5e;
       --accent: #c8956c;
       --accent-light: #f0dcc8;
       --line: #e8e0d0;
-      --chapter-bg: #f5ede0;
+      --chapter-bg: #fdf5ee;
     }
 
     *,
@@ -341,49 +341,60 @@
       font-weight: 700;
     }
 
+    /* ── iMessage-style chat ── */
     .chat-wrap {
-      margin: 22px 0;
+      margin: 28px 0;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 6px;
+      font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
     }
-
     .chat {
-      max-width: 72%;
-      padding: 11px 16px;
-      border-radius: 16px;
-      font-family: 'Inter', sans-serif;
-      font-size: .88rem;
-      line-height: 1.6;
+      max-width: 68%;
+      padding: 10px 14px;
+      font-size: .9rem;
+      line-height: 1.5;
+      position: relative;
+      word-break: break-word;
     }
-
     .chat-left {
-      background: #f0ece4;
-      border-bottom-left-radius: 4px;
+      background: #e9e9eb;
+      color: #000;
+      border-radius: 18px 18px 18px 4px;
       align-self: flex-start;
     }
-
     .chat-right {
-      background: var(--accent-light);
-      border-bottom-right-radius: 4px;
+      background: #007aff;
+      color: #fff;
+      border-radius: 18px 18px 4px 18px;
       align-self: flex-end;
     }
-
     .chat-name {
-      font-size: .72rem;
+      font-size: .68rem;
       font-weight: 600;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: .06em;
+      margin-bottom: 3px;
+      letter-spacing: .03em;
+      text-transform: none;
     }
-
-    .chat-left .chat-name {
-      color: var(--muted);
+    .chat-left .chat-name { color: #6e6e73; }
+    .chat-right .chat-name { color: rgba(255,255,255,.75); text-align: right; }
+    .chat-left + .chat-left { border-top-left-radius: 6px; margin-top: 2px; }
+    .chat-right + .chat-right { border-top-right-radius: 6px; margin-top: 2px; }
+    .chat-wrap-container {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px 16px 10px;
+      margin: 28px 0;
+      box-shadow: 0 1px 8px rgba(0,0,0,.08);
+      border: 1px solid #e5e5ea;
     }
-
-    .chat-right .chat-name {
-      color: var(--accent);
-      text-align: right;
+    .chat-wrap-container .chat-wrap { margin: 0; }
+    .chat-topbar {
+      text-align: center;
+      font-size: .72rem;
+      color: #8e8e93;
+      margin-bottom: 14px;
+      font-family: -apple-system, 'SF Pro Text', sans-serif;
     }
 
     .note {
@@ -642,7 +653,7 @@
       <p>Ini cerita tentang dua orang yang hampir. Yang hampir saling memilih, hampir cukup berani, hampir punya cukup
         waktu. Tapi pada akhirnya, "hampir" memang bukan "benar-benar".</p>
 
-      <p>Namanya Sena.</p>
+      <p>Namanya Sena — Sena Audrey Artha.</p>
 
       <p>Aku mengenalnya bukan lewat pertemuan yang dramatis atau momen yang layak diceritakan ulang di hadapan banyak
         orang. Aku mengenalnya lewat headset putih yang hampir selalu ada di telinganya, lewat tawa yang terlalu mudah
@@ -653,7 +664,7 @@
 
       <p>Dua huruf. Dan dari sana, entah bagaimana, semuanya dimulai.</p>
 
-      <p>Aku Naren. Tidak banyak yang perlu dijelaskan tentangku, sebenarnya. Aku tipe orang yang lebih nyaman mengamati
+      <p>Aku Naren — Naren Elliot Dirgantara. Tidak banyak yang perlu dijelaskan tentangku, sebenarnya. Aku tipe orang yang lebih nyaman mengamati
         dari jauh daripada langsung masuk ke tengah-tengah sesuatu. Pendiam bukan karena tidak punya kata-kata, tapi
         karena kata-kata rasanya terlalu berat untuk dikeluarkan pada orang yang belum cukup aku kenal. Aku juga terlalu
         mudah mengikuti arus — bukan karena tidak punya pendapat, tapi karena konflik selalu terasa lebih melelahkan
@@ -1281,7 +1292,7 @@
       <p>Namanya ada di kelompok tiga. Lima orang. Naren membaca daftar nama di papan pengumuman dan berhenti di nama
         keempat.</p>
 
-      <p><em>Sena Arya W. — XI IPA 2</em></p>
+      <p><em>Sena Audrey Artha — XI IPA 2</em></p>
 
       <p>Dia membaca lagi untuk memastikan. Nama itu masih ada di sana.</p>
 
